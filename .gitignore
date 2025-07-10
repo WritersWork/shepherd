@@ -46,3 +46,5 @@ api/src/lib/generateGraphiQLHeader.*
 sendgrid.env
 
 postgres
+
+!shepherd.js/dist/
