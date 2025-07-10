@@ -138,9 +138,9 @@
    */
   function _addStepEventListeners() {
     // Prevents window from moving on touch.
-    window.addEventListener('touchmove', _preventModalBodyTouch, {
-      passive: false
-    });
+    // window.addEventListener('touchmove', _preventModalBodyTouch, {
+    //   passive: false
+    // });
   }
 
   /**
@@ -153,9 +153,9 @@
       rafId = undefined;
     }
 
-    window.removeEventListener('touchmove', _preventModalBodyTouch, {
-      passive: false
-    });
+    // window.removeEventListener('touchmove', _preventModalBodyTouch, {
+    //   passive: false
+    // });
   }
 
   /**
