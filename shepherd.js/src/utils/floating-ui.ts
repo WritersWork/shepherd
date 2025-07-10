@@ -6,8 +6,8 @@ import {
   computePosition,
   flip,
   autoPlacement,
-  limitShift,
-  shift,
+  // limitShift,
+  // shift,
   type ComputePositionConfig,
   type MiddlewareData,
   type Placement,
@@ -202,13 +202,13 @@ export function getFloatingUIOptions(
       options.middleware.push(flip());
     }
 
-    options.middleware.push(
-      // Replicate PopperJS default behavior.
-      shift({
-        limiter: limitShift(),
-        crossAxis: true
-      })
-    );
+    // options.middleware.push(
+    //   // Replicate PopperJS default behavior.
+    //   shift({
+    //     limiter: limitShift(),
+    //     crossAxis: true
+    //   })
+    // );
 
     if (arrowEl) {
       const arrowOptions =

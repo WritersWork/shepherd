@@ -811,8 +811,7 @@ function rectToClientRect(rect) {
 }
 
 const _excluded = ["crossAxis", "alignment", "allowedPlacements", "autoAlignment"],
-  _excluded2 = ["mainAxis", "crossAxis", "fallbackPlacements", "fallbackStrategy", "fallbackAxisSideDirection", "flipAlignment"],
-  _excluded4 = ["mainAxis", "crossAxis", "limiter"];
+  _excluded2 = ["mainAxis", "crossAxis", "fallbackPlacements", "fallbackStrategy", "fallbackAxisSideDirection", "flipAlignment"];
 function computeCoordsFromPlacement(_ref, placement, rtl) {
   let {
     reference,
@@ -1333,150 +1332,6 @@ const flip$1 = function flip(options) {
         }
       }
       return {};
-    }
-  };
-};
-
-/**
- * Optimizes the visibility of the floating element by shifting it in order to
- * keep it in view when it will overflow the clipping boundary.
- * @see https://floating-ui.com/docs/shift
- */
-const shift$1 = function shift(options) {
-  if (options === void 0) {
-    options = {};
-  }
-  return {
-    name: 'shift',
-    options,
-    async fn(state) {
-      const {
-        x,
-        y,
-        placement
-      } = state;
-      const _evaluate4 = evaluate(options, state),
-        {
-          mainAxis: checkMainAxis = true,
-          crossAxis: checkCrossAxis = false,
-          limiter = {
-            fn: _ref => {
-              let {
-                x,
-                y
-              } = _ref;
-              return {
-                x,
-                y
-              };
-            }
-          }
-        } = _evaluate4,
-        detectOverflowOptions = _objectWithoutPropertiesLoose(_evaluate4, _excluded4);
-      const coords = {
-        x,
-        y
-      };
-      const overflow = await detectOverflow(state, detectOverflowOptions);
-      const crossAxis = getSideAxis(getSide(placement));
-      const mainAxis = getOppositeAxis(crossAxis);
-      let mainAxisCoord = coords[mainAxis];
-      let crossAxisCoord = coords[crossAxis];
-      if (checkMainAxis) {
-        const minSide = mainAxis === 'y' ? 'top' : 'left';
-        const maxSide = mainAxis === 'y' ? 'bottom' : 'right';
-        const min = mainAxisCoord + overflow[minSide];
-        const max = mainAxisCoord - overflow[maxSide];
-        mainAxisCoord = clamp(min, mainAxisCoord, max);
-      }
-      if (checkCrossAxis) {
-        const minSide = crossAxis === 'y' ? 'top' : 'left';
-        const maxSide = crossAxis === 'y' ? 'bottom' : 'right';
-        const min = crossAxisCoord + overflow[minSide];
-        const max = crossAxisCoord - overflow[maxSide];
-        crossAxisCoord = clamp(min, crossAxisCoord, max);
-      }
-      const limitedCoords = limiter.fn(_extends({}, state, {
-        [mainAxis]: mainAxisCoord,
-        [crossAxis]: crossAxisCoord
-      }));
-      return _extends({}, limitedCoords, {
-        data: {
-          x: limitedCoords.x - x,
-          y: limitedCoords.y - y,
-          enabled: {
-            [mainAxis]: checkMainAxis,
-            [crossAxis]: checkCrossAxis
-          }
-        }
-      });
-    }
-  };
-};
-/**
- * Built-in `limiter` that will stop `shift()` at a certain point.
- */
-const limitShift$1 = function limitShift(options) {
-  if (options === void 0) {
-    options = {};
-  }
-  return {
-    options,
-    fn(state) {
-      const {
-        x,
-        y,
-        placement,
-        rects,
-        middlewareData
-      } = state;
-      const {
-        offset = 0,
-        mainAxis: checkMainAxis = true,
-        crossAxis: checkCrossAxis = true
-      } = evaluate(options, state);
-      const coords = {
-        x,
-        y
-      };
-      const crossAxis = getSideAxis(placement);
-      const mainAxis = getOppositeAxis(crossAxis);
-      let mainAxisCoord = coords[mainAxis];
-      let crossAxisCoord = coords[crossAxis];
-      const rawOffset = evaluate(offset, state);
-      const computedOffset = typeof rawOffset === 'number' ? {
-        mainAxis: rawOffset,
-        crossAxis: 0
-      } : _extends({
-        mainAxis: 0,
-        crossAxis: 0
-      }, rawOffset);
-      if (checkMainAxis) {
-        const len = mainAxis === 'y' ? 'height' : 'width';
-        const limitMin = rects.reference[mainAxis] - rects.floating[len] + computedOffset.mainAxis;
-        const limitMax = rects.reference[mainAxis] + rects.reference[len] - computedOffset.mainAxis;
-        if (mainAxisCoord < limitMin) {
-          mainAxisCoord = limitMin;
-        } else if (mainAxisCoord > limitMax) {
-          mainAxisCoord = limitMax;
-        }
-      }
-      if (checkCrossAxis) {
-        var _middlewareData$offse, _middlewareData$offse2;
-        const len = mainAxis === 'y' ? 'width' : 'height';
-        const isOriginSide = ['top', 'left'].includes(getSide(placement));
-        const limitMin = rects.reference[crossAxis] - rects.floating[len] + (isOriginSide ? ((_middlewareData$offse = middlewareData.offset) == null ? void 0 : _middlewareData$offse[crossAxis]) || 0 : 0) + (isOriginSide ? 0 : computedOffset.crossAxis);
-        const limitMax = rects.reference[crossAxis] + rects.reference[len] + (isOriginSide ? 0 : ((_middlewareData$offse2 = middlewareData.offset) == null ? void 0 : _middlewareData$offse2[crossAxis]) || 0) - (isOriginSide ? computedOffset.crossAxis : 0);
-        if (crossAxisCoord < limitMin) {
-          crossAxisCoord = limitMin;
-        } else if (crossAxisCoord > limitMax) {
-          crossAxisCoord = limitMax;
-        }
-      }
-      return {
-        [mainAxis]: mainAxisCoord,
-        [crossAxis]: crossAxisCoord
-      };
     }
   };
 };
@@ -2280,13 +2135,6 @@ function autoUpdate(reference, floating, update, options) {
 const autoPlacement = autoPlacement$1;
 
 /**
- * Optimizes the visibility of the floating element by shifting it in order to
- * keep it in view when it will overflow the clipping boundary.
- * @see https://floating-ui.com/docs/shift
- */
-const shift = shift$1;
-
-/**
  * Optimizes the visibility of the floating element by flipping the `placement`
  * in order to keep it in view when the preferred placement(s) will overflow the
  * clipping boundary. Alternative to `autoPlacement`.
@@ -2300,11 +2148,6 @@ const flip = flip$1;
  * @see https://floating-ui.com/docs/arrow
  */
 const arrow = arrow$1;
-
-/**
- * Built-in `limiter` that will stop `shift()` at a certain point.
- */
-const limitShift = limitShift$1;
 
 /**
  * Computes the `x` and `y` coordinates that will place the floating element
@@ -2466,12 +2309,15 @@ function getFloatingUIOptions(attachToOptions, step) {
     } else {
       options.middleware.push(flip());
     }
-    options.middleware.push(
-    // Replicate PopperJS default behavior.
-    shift({
-      limiter: limitShift(),
-      crossAxis: true
-    }));
+
+    // options.middleware.push(
+    //   // Replicate PopperJS default behavior.
+    //   shift({
+    //     limiter: limitShift(),
+    //     crossAxis: true
+    //   })
+    // );
+
     if (arrowEl) {
       const arrowOptions = typeof step.options.arrow === 'object' ? step.options.arrow : {
         padding: 4
